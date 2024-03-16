@@ -10,24 +10,24 @@ function App() {
   // activeProject: value means user wants to see the details of a specific project
 
   const [projectsState, setProjectsState] = useState({
-    activeProject: undefined,
+    activeProjectId: undefined,
     projects: [],
+    tasks: [],
   });
 
   function handleOpenAddProject() {
     setProjectsState((prevState) => {
-      return { ...prevState, activeProject: null };
+      return { ...prevState, activeProjectId: null };
     });
   }
 
-  function hanldeAddProject(projectData) {
+  function handleAddProject(projectData) {
     const newProject = projectData;
-    console.log(newProject);
     // TODO: active project will be equal to newProject.id
     setProjectsState((prevState) => {
       return {
         ...prevState,
-        activeProject: undefined,
+        activeProjectId: undefined,
         projects: [...prevState.projects, newProject],
       };
     });
@@ -37,7 +37,7 @@ function App() {
     setProjectsState((prevState) => {
       return {
         ...prevState,
-        activeProject: undefined,
+        activeProjectId: undefined,
       };
     });
   }
@@ -46,27 +46,70 @@ function App() {
     setProjectsState((prevState) => {
       return {
         ...prevState,
-        activeProject: id,
+        activeProjectId: id,
       };
     });
   }
 
-  let content;
+  function handleDeleteProject(id) {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        activeProjectId: undefined,
+        projects: prevState.projects.filter((p) => p.id !== id),
+      };
+    });
+  }
 
-  if (projectsState.activeProject === undefined) {
+  function handleAddTask(text) {
+    setProjectsState((prevState) => {
+      const taskId = Math.random();
+      const task = {
+        id: taskId,
+        text: text,
+        projectId: prevState.activeProjectId,
+      };
+      return {
+        ...prevState,
+        tasks: [task, ...prevState.tasks],
+      };
+    });
+  }
+
+  function handleDeleteTask(id) {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        tasks: prevState.tasks.filter((task) => task.id !== id),
+      };
+    });
+  }
+
+  const selectedProject = projectsState.projects.find(
+    (p) => p.id === projectsState.activeProjectId
+  );
+  const selectedTasks = projectsState.tasks.filter(
+    (task) => task.projectId === projectsState.activeProjectId
+  );
+  let content = (
+    <SelectedProject
+      onDeleteProject={handleDeleteProject}
+      project={selectedProject}
+      onAddTask={handleAddTask}
+      onDeleteTask={handleDeleteTask}
+      tasks={selectedTasks}
+    />
+  );
+
+  if (projectsState.activeProjectId === undefined) {
     content = <NoProjectSelected onOpenAddProject={handleOpenAddProject} />;
-  } else if (projectsState.activeProject === null) {
+  } else if (projectsState.activeProjectId === null) {
     content = (
       <NewProject
         onCancel={handleCancelAddProject}
-        onAddProject={hanldeAddProject}
+        onAddProject={handleAddProject}
       />
     );
-  } else {
-    const selectedProject = projectsState.projects.find(
-      (p) => p.id === projectsState.activeProject
-    );
-    content = <SelectedProject project={selectedProject} />;
   }
 
   // content = (
@@ -82,7 +125,7 @@ function App() {
   return (
     <main className="h-screen my-8 flex gap-8">
       <ProjectsSidebar
-        selectedProjectId={projectsState.activeProject}
+        selectedProjectId={projectsState.activeProjectId}
         onSelectProject={handleSelectProject}
         onOpenAddProject={handleOpenAddProject}
         projects={projectsState.projects}

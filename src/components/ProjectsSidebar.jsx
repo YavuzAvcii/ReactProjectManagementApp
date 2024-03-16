@@ -16,8 +16,8 @@ export default function ProjectsSidebar({
         {projects.map((project) => {
           let stylings =
             "w-full text-left px-2 py-2 my-1 rounded-md hover:text-stone-200 hover:bg-stone-800 ";
-          if (project.id === selectedProject) {
-            stylings += " bg-stone-800 text-stone-200";
+          if (project.id === selectedProjectId) {
+            stylings += " bg-stone-900 text-stone-200";
           } else {
             stylings += " text-stone-400";
           }
