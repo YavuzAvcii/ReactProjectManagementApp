@@ -2,7 +2,7 @@ import NewTask from "./NewTask";
 
 export default function Tasks({ onAdd, onDelete, tasks }) {
   return (
-    <section>
+    <section className="mt-10">
       <h2 className="text-2xl font-bold mb-3">Tasks</h2>
 
       <NewTask onAdd={onAdd} />
